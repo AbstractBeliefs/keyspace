@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css">
+    <title>Keybase  - {% block title %}{% endblock %}</title>
+  </head>
+
+  <body>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if session["username"] %}
+      <a class="pure-button" href="/logout">Logout</a>
+    {% else %}
+      <a class="pure-button" href="/login">login</a>
+      <a class="pure-button" href="/register">Register</a>
+    {% endif %}
+    {% block body %}{% endblock %}
+  </body>
+</html>

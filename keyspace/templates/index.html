@@ -1,9 +1,15 @@
-<html>
-  <head>
-    <title>Welcome to Keyspace</title>
-  </head>
+{% extends "base.html" %}
+{% block title %}Welcome!{% endblock %}
 
-  <body>
-    <h1>Welcome to Keyspace</title>
-  </body>
-</html>
+{% block body %}
+<h1>Welcome to Keyspace</h1>
+
+<p>Welcome to Keyspace, an identity and profile proof service.</p>
+
+<p>Keybase allows you to lay claims to your profiles around the web with cryptographic keys. By signing statements
+saying that you control an account, people can be certain that the account belongs to you.</p>
+
+<p>This means that if someone knows you through a proven microblogging account, they can trust that any other accounts
+around the web signed by the same key also belong to you, and they can find these all in one place on your Keyspace
+profile.</p>
+{% endblock %}

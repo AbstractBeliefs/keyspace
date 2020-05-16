@@ -2,3 +2,4 @@
 *.pyo
 venv/
 *.sqlite
+keyspace/config.py

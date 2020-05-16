@@ -1,0 +1,2 @@
+secret_key = "Your Secret Key"
+db_path = "keyspace.sqlite"

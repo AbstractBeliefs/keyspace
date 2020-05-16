@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<h1>Register with Keyspace</h1>
+<form class="pure-form pure-form-stacked" action="/register" method="POST">
+  <fieldset>
+    <legend>Register</legend>
+
+    <label for="user">Username</label>
+    <input id="user" name="user"  placeholder="Username" />
+    <span class="pure-form-message">This is a required field.</span>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="Password" />
+    <span class="pure-form-message">This is a required field.</span>
+
+    <button type="submit" class="pure-button pure-button-primary">Register</button>
+  </fieldset>
+</form>
+{% endblock %}
