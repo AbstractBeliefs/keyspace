@@ -1,18 +1,19 @@
-from flask import render_template, session, redirect, request, flash
+from flask import render_template, session, redirect, request, flash, Blueprint, url_for
 from passlib.hash import argon2
 import sqlite3
-from . import app, db
+from . import db
 
-@app.route("/")
+front_bp = Blueprint("front", __name__)
+
+@front_bp.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("front/index.html")
 
-@app.route("/login", methods=["GET", "POST"])
+@front_bp.route("/login", methods=["GET", "POST"])
 def login():
     if session.get("username", False):
-        app.logger.info("Already logged in, redirecting")
         flash("You're already logged in!", "info")
-        return redirect("/")
+        return redirect(url_for("front.index"))
 
     if request.method == "POST":
         username = request.form["user"]
@@ -21,33 +22,31 @@ def login():
         db_pass = db.query_db("SELECT password FROM users WHERE username = ?", (username,), True)
         if db_pass is None:
             flash("No such username: {}".format(username), "warn")
-            return redirect("/login")
-        else:
-            db_pass = db_pass[0]
+            return redirect(url_for("front.login"))
 
-        if argon2.verify(password, db_pass):
+        if argon2.verify(password, db_pass["password"]):
+            session.clear()
             session["username"] = username
             flash("You're logged in as {}.".format(username), "info")
-            return redirect("/")
+            return redirect(url_for("front.index"))
         else:
             flash("Incorrect password for {}.".format(username), "error")
-            return redirect("/login")
+            return redirect(url_for("front.login"))
 
-    return render_template("login.html")
+    return render_template("front/login.html")
 
 
-@app.route("/logout")
+@front_bp.route("/logout")
 def logout():
-    session["username"] = False
+    session.clear()
     flash("You've logged out. Bye!", "info")
-    return redirect("/")
+    return redirect(url_for("front.index"))
 
-@app.route("/register", methods=["GET", "POST"])
+@front_bp.route("/register", methods=["GET", "POST"])
 def register():
     if session.get("username", False):
-        app.logger.info("Already logged in, redirecting")
         flash("You're already logged in!", "warn")
-        return redirect("/")
+        return redirect(url_for("front.index"))
 
     if request.method == "POST":
         username = request.form["user"]
@@ -55,23 +54,22 @@ def register():
 
         if not username:
             flash("Username {} is not available".format(username), "warn")
-            return redirect("/register")
+            return redirect(url_for("front.register"))
         if not password:
             flash("Username {} is not available".format(username), "warn")
-            return redirect("/register")
+            return redirect(url_for("front.register"))
 
         try:
             passhash = argon2.hash(password)
             c = db.get_db().cursor()
             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, passhash))
             db.get_db().commit()
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError:  # TODO: abstract this away, we shouldn't need to deal with sqlite ourselves here
             flash("Username {} is not available".format(username), "warn")
-            return redirect("/register")
+            return redirect(url_for("front.register"))
 
-        app.logger.info("Registered with {}:{}".format(username, password))
         flash("Welcome to Keyspace, {}".format(username), "info")
         session["username"] = username
-        return redirect("/")
+        return redirect(url_for("front.index"))
 
-    return render_template("register.html")
+    return render_template("front/register.html")
