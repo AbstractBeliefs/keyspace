@@ -1,0 +1,38 @@
+body {
+    width: 80%;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    margin-top: 15px;
+    justify-content: space-between;
+}
+
+.header_logo {
+    font-size: 20px;
+}
+
+.button {
+    text-decoration: none;
+    background: lightgray;
+    color: black;
+    padding: 5px;
+    position: relative;
+    top: 5px;
+}
+
+.info {
+    background: #17a2b8;
+    color: white;
+}
+
+.warn {
+    background: #ffc107;
+    color: black;
+}
+
+.error {
+    background: #dc3545;
+    color: white;
+}

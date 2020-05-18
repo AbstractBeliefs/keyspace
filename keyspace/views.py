@@ -11,7 +11,7 @@ def index():
 def login():
     if session.get("username", False):
         app.logger.info("Already logged in, redirecting")
-        flash("You're already logged in!")
+        flash("You're already logged in!", "info")
         return redirect("/")
 
     if request.method == "POST":
@@ -20,17 +20,17 @@ def login():
 
         db_pass = db.query_db("SELECT password FROM users WHERE username = ?", (username,), True)
         if db_pass is None:
-            flash("No such username: {}".format(username))
+            flash("No such username: {}".format(username), "warn")
             return redirect("/login")
         else:
             db_pass = db_pass[0]
 
         if argon2.verify(password, db_pass):
             session["username"] = username
-            flash("You're logged in as {}.".format(username))
+            flash("You're logged in as {}.".format(username), "info")
             return redirect("/")
         else:
-            flash("Incorrect password for {}.".format(username))
+            flash("Incorrect password for {}.".format(username), "error")
             return redirect("/login")
 
     return render_template("login.html")
@@ -39,14 +39,14 @@ def login():
 @app.route("/logout")
 def logout():
     session["username"] = False
-    flash("You've logged out. Bye!")
+    flash("You've logged out. Bye!", "info")
     return redirect("/")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if session.get("username", False):
         app.logger.info("Already logged in, redirecting")
-        flash("You're already logged in!")
+        flash("You're already logged in!", "warn")
         return redirect("/")
 
     if request.method == "POST":
@@ -54,10 +54,10 @@ def register():
         password = request.form["password"]
 
         if not username:
-            flash("Username {} is not available".format(username))
+            flash("Username {} is not available".format(username), "warn")
             return redirect("/register")
         if not password:
-            flash("Username {} is not available".format(username))
+            flash("Username {} is not available".format(username), "warn")
             return redirect("/register")
 
         try:
@@ -66,11 +66,11 @@ def register():
             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, passhash))
             db.get_db().commit()
         except sqlite3.IntegrityError:
-            flash("Username {} is not available".format(username))
+            flash("Username {} is not available".format(username), "warn")
             return redirect("/register")
 
         app.logger.info("Registered with {}:{}".format(username, password))
-        flash("Welcome to Keyspace, {}".format(username))
+        flash("Welcome to Keyspace, {}".format(username), "info")
         session["username"] = username
         return redirect("/")
 
