@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ g.username }} (edit){% endblock %}
+
+{% block body %}
+<h1>{{ g.username }}</h1>
+
+<p>Welcome to your keyspace profile. Your key tree is listed below:</p>
+
+<ul>
+{% for key, veris in key_tree.items() %}
+  <li> {{ key }} </li>
+  <ul>
+  {% for veri in veris %}
+    <li>
+      {{ veri["driver"]|title }}: <a href="{{ veri["data"]}}">{{ veri["data"] }}</a>
+      {% if veri["valid"] %}
+        <span class="valid">&nbsp;✔&nbsp;</span>
+      {% else %}
+        <span class="invalid">&nbsp;✘&nbsp;</span>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+{% endfor %}
+</ul>
+
+{% endblock %}

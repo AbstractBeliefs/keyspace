@@ -13,13 +13,16 @@ header {
     font-size: 20px;
 }
 
+.header_buttons {
+    position: relative;
+    top: 5px;
+}
+
 .button {
     text-decoration: none;
     background: lightgray;
     color: black;
     padding: 5px;
-    position: relative;
-    top: 5px;
 }
 
 .info {
@@ -34,5 +37,15 @@ header {
 
 .error {
     background: #dc3545;
+    color: white;
+}
+
+.valid {
+    background: #4aaa4a;
+    color: white;
+}
+
+.invalid {
+    background: #aa4a4a;
     color: white;
 }

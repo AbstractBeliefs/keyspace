@@ -12,7 +12,8 @@
       </div>
 
       <div class="header_buttons">
-      {% if session["username"] %}
+      {% if g.username %}
+        Hi, <a href="/me">{{g.username}}</a>
         <a class="button" href="/logout">logout</a>
       {% else %}
         <a class="button" href="/login">login</a>

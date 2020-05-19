@@ -7,7 +7,8 @@ def create_app():
     app.secret_key = config.secret_key
     db.init_db(app)
 
-    from . import front
+    from . import front, user
     app.register_blueprint(front.front_bp)
+    app.register_blueprint(user.user_bp)
 
     return app

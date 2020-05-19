@@ -1,7 +1,7 @@
 from flask import render_template, session, redirect, request, flash, Blueprint, url_for
 from passlib.hash import argon2
 import sqlite3
-from . import db
+from . import db, proofs
 
 front_bp = Blueprint("front", __name__)
 
@@ -11,7 +11,7 @@ def index():
 
 @front_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if session.get("username", False):
+    if session.get("user_id", False):
         flash("You're already logged in!", "info")
         return redirect(url_for("front.index"))
 
@@ -19,14 +19,14 @@ def login():
         username = request.form["user"]
         password = request.form["password"]
 
-        db_pass = db.query_db("SELECT password FROM users WHERE username = ?", (username,), True)
+        db_pass = db.query_db("SELECT id, password FROM users WHERE username = ?", (username,), True)
         if db_pass is None:
             flash("No such username: {}".format(username), "warn")
             return redirect(url_for("front.login"))
 
         if argon2.verify(password, db_pass["password"]):
             session.clear()
-            session["username"] = username
+            session["user_id"] = db_pass["id"]
             flash("You're logged in as {}.".format(username), "info")
             return redirect(url_for("front.index"))
         else:
@@ -44,7 +44,7 @@ def logout():
 
 @front_bp.route("/register", methods=["GET", "POST"])
 def register():
-    if session.get("username", False):
+    if session.get("user_id", False):
         flash("You're already logged in!", "warn")
         return redirect(url_for("front.index"))
 
@@ -68,8 +68,7 @@ def register():
             flash("Username {} is not available".format(username), "warn")
             return redirect(url_for("front.register"))
 
-        flash("Welcome to Keyspace, {}".format(username), "info")
-        session["username"] = username
-        return redirect(url_for("front.index"))
+        flash("Registration complete, now log in!", "info")
+        return redirect(url_for("front.login"))
 
     return render_template("front/register.html")
